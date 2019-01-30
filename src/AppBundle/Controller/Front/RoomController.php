@@ -6,6 +6,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use AppBundle\Entity\RoomTable;
+use AppBundle\Entity\TableOrder;
+use AppBundle\Entity\TableOrderLine;
 use AppBundle\Form\FrontTableOrderType;
 
 class RoomController extends Controller
@@ -25,22 +27,57 @@ class RoomController extends Controller
     }
     
     /**
-     * @Route("/room/{id}", name="order")
+     * @Route("/room/{id}/create-order", name="create_order")
      */
-    public function orderAction(Request $request, RoomTable $roomTable)
+    public function createOrderAction(Request $request, RoomTable $roomTable)
     {
         $orderForm = $this->createForm(FrontTableOrderType::class);
         
         $orderForm->handleRequest($request);
 
         if ($orderForm->isSubmitted() && $orderForm->isValid()) {
-            //$this->getContainer('toto')->createOrder($orderForm->getData());
-            dump($orderForm->getData()); die;
+            $em = $this->getDoctrine()->getManager();
+
+            $tableOrder = new TableOrder();
+            $tableOrder->setRoomTable($roomTable);
+            
+            foreach ($orderForm->getData() as $category => $orderLinesData) {
+                foreach ($orderLinesData as $dishId => $quantity) {
+                    if (is_null($quantity) || 0 === $quantity) {
+                        continue;
+                    }
+                    
+                    $tableOrderLine = new TableOrderLine();
+                    
+                    $tableOrderLine
+                        ->setQuantity($quantity)
+                        ->setDish($em->getRepository('AppBundle:Dish')->findOneBy(['id' => $dishId]))
+                        ->setTableOrder($tableOrder)
+                    ;
+                    
+                    $em->persist($tableOrderLine);
+                }   
+            }
+
+            $em->persist($tableOrder);
+            $em->flush();
+            
+            return $this->redirectToRoute('room');
         }
         
-        return $this->render('room/order.html.twig', [
+        return $this->render('room/create_order.html.twig', [
             'roomTable' => $roomTable,
             'orderForm' => $orderForm->createView(),
+        ]);
+    }
+    
+    /**
+     * @Route("/room/{id}/show-orders", name="show_orders")
+     */
+    public function showOrdersAction(Request $request, RoomTable $roomTable)
+    {
+        return $this->render('room/show_orders.html.twig', [ 
+            'roomTable' => $roomTable, 
         ]);
     }
 }

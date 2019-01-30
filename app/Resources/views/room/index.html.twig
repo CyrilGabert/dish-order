@@ -5,7 +5,9 @@
     <ul class="container-fluid room-tables">
         {% for roomTable in roomTables %}
             <li class="row">
-                <a class="btn btn-info col" href="{{ path('order', {'id': roomTable.id}) }}">{{ roomTable.name }}</a>
+                <p class="col-md-2">Table: {{ roomTable.name }}</p>
+                <a class="col-md-5 btn btn-info" href="{{ path('create_order', {'id': roomTable.id}) }}">Passer une commande</a>
+                <a class="col-md-5 btn btn-info" href="{{ path('show_orders', {'id': roomTable.id}) }}">Voir les commandes</a>                
             </li>
         {% endfor %}
     </ul>

@@ -13,6 +13,14 @@ class KitchenController extends Controller
      */
     public function indexAction(Request $request)
     {
-        return $this->render('kitchen/index.html.twig', []);
+        $em = $this->getDoctrine()->getManager();
+        $tableOrders = $em->getRepository('AppBundle:TableOrder')->findBy(
+            [],
+            ['createdAt' => 'DESC']
+        );
+        
+        return $this->render('kitchen/index.html.twig', [
+            'tableOrders' => $tableOrders,
+        ]);
     }
 }

@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  *
  * @ORM\Table(name="table_order")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\TableOrderRepository")
+ * @ORM\HasLifecycleCallbacks()
  */
 class TableOrder
 {
@@ -25,7 +26,7 @@ class TableOrder
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="createdAt", type="datetime")
+     * @ORM\Column(name="created_at", type="datetime")
      */
     private $createdAt;
 
@@ -48,6 +49,14 @@ class TableOrder
     {
         $this->tableOrderLines = new ArrayCollection();
     }
+    
+    /**
+     * @ORM\PrePersist
+     */
+    public function onPrePersist()
+    {
+        $this->setCreatedAt(new \DateTime('now'));
+    }
      
     /**
      * Get id
@@ -66,7 +75,7 @@ class TableOrder
      *
      * @return TableOrder
      */
-    public function setCreatedAt($createdAt)
+    public function setCreatedAt(\DateTime $createdAt)
     {
         $this->createdAt = $createdAt;
 
@@ -139,5 +148,20 @@ class TableOrder
     public function getTableOrderLines()
     {
         return $this->tableOrderLines;
+    }
+    
+    /**
+     * Get totalPrice
+     *
+     * @return float
+     */
+    public function getTotalPrice()
+    {
+        $total = 0;
+        foreach ($this->getTableOrderLines() as $tableOrderLine) {
+            $total += $tableOrderLine->getQuantity() * $tableOrderLine->getDish()->getPrice();
+        }
+        
+        return $total;    
     }
 }

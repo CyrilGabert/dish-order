@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Liste des Commandes de la Table n°{{ roomTable.name }}</h1>
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th>Dates</th>
+                <th>Commandes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tableOrder in roomTable.getTableOrders() %}
+                <tr>
+                    <td>{{ tableOrder.createdAt|date('d/m/Y H:i:s') }}</td>
+                    <td>
+                        <table class="table">
+                            {% for tableOrderLine in tableOrder.getTableOrderLines() %}
+                            <tr>
+                                <td>{{ tableOrderLine.dish.category }}</td>
+                                <td>{{ tableOrderLine.dish.name }}</td>
+                                <td>{{ tableOrderLine.dish.price }} €</td>
+                                <td>{{ tableOrderLine.quantity }}</td>
+                            </tr>
+                            {% endfor %}
+                            <tr>
+                                <th colspan="4">Total de la commande: {{ tableOrder.getTotalPrice() }} €</th>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
