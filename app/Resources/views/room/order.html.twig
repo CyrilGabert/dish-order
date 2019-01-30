@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Commande pour la table {{ roomTable.name }}</h1>
+    
+    {{ form_start(orderForm) }}
+        {{ form_widget(orderForm) }}
+        <input type="submit" value="Create" />
+    {{ form_end(orderForm) }}
+    
+{% endblock %}
