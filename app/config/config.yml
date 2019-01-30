@@ -69,3 +69,21 @@ swiftmailer:
 sensio_framework_extra:
    router:
         annotations: false
+
+liip_monitor:
+    enable_controller: true
+    default_group: default
+    checks:
+        groups:
+            default:
+                php_version:
+                    7.0:  '>='
+                doctrine_dbal: default
+                security_advisory:
+                    lock_file:            '%kernel.root_dir%/../composer.lock'
+                pdo_connections:
+                    local_db:
+                        dsn: 'mysql:host=%database_host%;dbname=%database_name%'
+                        username: '%database_user%'
+                        password: '%database_password%'
+                        timeout: 1

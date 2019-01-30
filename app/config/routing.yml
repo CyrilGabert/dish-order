@@ -1,3 +1,7 @@
+_monitor:
+    resource: "@LiipMonitorBundle/Resources/config/routing.xml"
+    prefix: /monitor/health
+
 front:
     resource: '@AppBundle/Controller/Front'
     type: annotation
