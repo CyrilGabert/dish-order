@@ -19,6 +19,12 @@ class KitchenController extends Controller
             ['createdAt' => 'DESC']
         );
         
+        if ($request->isXmlHttpRequest()) {
+            return $this->render('kitchen/_list.html.twig', [
+                'tableOrders' => $tableOrders,
+            ]);  
+        }
+        
         return $this->render('kitchen/index.html.twig', [
             'tableOrders' => $tableOrders,
         ]);

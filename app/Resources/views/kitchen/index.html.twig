@@ -1,27 +1,27 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-<table class="table table-bordered">
-    <thead class="thead-dark">
-        <th>Dates</th>
-        <th>Tables</th>
-        <th>Commandes</th>
-    </thead>
-    <tbody>
-        {% for tableOrder in tableOrders %}
-            <tr>
-                <td>{{ tableOrder.createdAt|date('d/m/Y H:i:s') }}</td>
-                <td>{% if tableOrder.roomTable is not null %}{{ tableOrder.roomTable.name }}{% endif %}</td>
-                <td>
-                    <ul>
-                        {% for tableOrderLine in tableOrder.getTableOrderLines() %}
-                            <li>[{{ tableOrderLine.dish.category }}] {{ tableOrderLine.dish.name }} x {{ tableOrderLine.quantity }}</li>
-                        {% endfor %}
-                    </ul>
-                </td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
 
+    <div id="table-container">
+        {% include 'kitchen/_list.html.twig' with {'tableOrders': tableOrders} %}
+    </div>
+
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+ 
+    <script type="text/javascript">
+        jQuery(document).ready(function() {
+            $container = $('#table-container');
+            
+            setInterval(function() {
+                $.get($(location).attr('href'))
+                .done(function(data) {
+                    $container.html(data);
+                });
+            }, 5000);
+        });
+    </script>
 {% endblock %}
